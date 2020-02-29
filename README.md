@@ -3,7 +3,9 @@ A python script that compares inputted strings to a customisable flat file datab
 
 This script will load each line from any file within the specified database directory into a list, and allow you to search the list whilst returning what number in the list the value is.
 
-<a href="https://github.com/smcclennon/FFDB/releases/latest/download/FFDB.py">
+The Spell Checking Oriented Word Lists (SCOWL) are the files that come pre-bundled within default flat file database with this script. [Learn more about SCOWL](scowl-readme.txt)
+
+<a href="https://github.com/smcclennon/FFDB/releases/latest/download/FFDB.zip">
 <img src="https://smcclennon.github.io/update/download.png" alt="Download latest FFDB release">
 </a>
 
