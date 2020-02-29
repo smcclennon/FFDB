@@ -13,17 +13,28 @@ from os.path import isfile, join
 
 
 
+# -==========[ Update code ]==========-
 # Updater: Used to check for new releases on GitHub
 # github.com/smcclennon/Updater
-import os  # detecting OS type (nt, posix, java), clearing console window,
-import sys  # flush stdout before restarting the script
+import os  # detecting OS type (nt, posix, java), clearing console window, restart the script
 from distutils.version import LooseVersion as semver  # as semver for readability
-if os.name == 'nt':
-    Windows = True
-else:
-    Windows = False
 import urllib.request, json  # load and parse the GitHub API
-if Windows:
+import platform  # Consistantly detect MacOS
+
+# Disable SSL certificate verification for MacOS (very bad practice, I know)
+# https://stackoverflow.com/a/55320961
+if platform.system() == 'Darwin':  # If MacOS
+    import ssl
+    try:
+        _create_unverified_https_context = ssl._create_unverified_context
+    except AttributeError:
+        # Legacy Python that doesn't verify HTTPS certificates by default
+        pass
+    else:
+        # Handle target environment that doesn't support HTTPS verification
+        ssl._create_default_https_context = _create_unverified_https_context
+
+if os.name == 'nt':
     import ctypes  # set Windows console window title
     ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==   Checking for updates...')
 
@@ -54,23 +65,27 @@ while updateAttempt < 3:  # Try to retry the update up to 3 times if an error oc
     except:  # If updating fails 3 times
         latest = '0'
 if semver(latest) > semver(ver):
+    if os.name == 'nt': ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==   Update available: {ver} -> {latest}')
     print('Update available!      ')
     print(f'Latest Version: v{latest}\n')
     for release in releases:
         print(f'{release[0]}:\n{release[1]}\n')
     confirm = input(str('Update now? [Y/n] ')).upper()
     if confirm != 'N':
+        if os.name == 'nt': ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==   Installing updates...')
         print(f'Downloading {proj} v{latest}...')
         urllib.request.urlretrieve(ddl, os.path.basename(__file__))  # download the latest version to cwd
         import sys; sys.stdout.flush()  # flush any prints still in the buffer
         os.system('cls||clear')  # Clear console window
-        os.system(f'"{__file__}"' if Windows else f'python3 "{__file__}"')
+        os.system(f'"{__file__}"' if os.name == 'nt' else f'python3 "{__file__}"')
         import time; time.sleep(0.2)
         quit()
+if os.name == 'nt': ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==')
+# -==========[ Update code ]==========-
 
 
 
-if Windows: ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==')
+
 print(f'Loading {databaseDIR}...', end='\r')
 start = time.time()
 databaseFiles = [f for f in os.listdir(databaseDIR) if isfile(join(databaseDIR, f))]
