@@ -22,7 +22,7 @@ The Spell Checking Oriented Word Lists (SCOWL) comes pre-bundled within default 
 3. Run FFDB.py
 
 #### Requirements:
-- Python 3.5+
+- Python 3.6+
 
 ## Screenshots
 ![Custom Message](https://smcclennon.github.io/assets/images/screenshots/FFDB/search-github.png)
