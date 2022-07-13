@@ -41,12 +41,10 @@ if os.name == 'nt':
 updateAttempt = 0  # Keep track of failed attempts
 print('Checking for updates...', end='\r')
 while updateAttempt < 3:  # Try to retry the update up to 3 times if an error occurs
-    updateAttempt = updateAttempt+1
+    updateAttempt += 1
     try:
         with urllib.request.urlopen("https://smcclennon.github.io/update/api/4") as internalAPI:
-            repo = []
-            for line in internalAPI.readlines():
-                repo.append(line.decode().strip())
+            repo = [line.decode().strip() for line in internalAPI.readlines()]
             apiLatest = repo[0]  # Latest release details
             proj = repo[1]  # Project name
             ddl = repo[2]  # Direct download link
@@ -70,7 +68,7 @@ if semver(latest) > semver(ver):
     print(f'Latest Version: v{latest}\n')
     for release in releases:
         print(f'{release[0]}:\n{release[1]}\n')
-    confirm = input(str('Update now? [Y/n] ')).upper()
+    confirm = input('Update now? [Y/n] ').upper()
     if confirm != 'N':
         if os.name == 'nt': ctypes.windll.kernel32.SetConsoleTitleW(f'   == {proj} v{ver} ==   Installing updates...')
         print(f'Downloading {proj} v{latest}...')
@@ -98,9 +96,9 @@ for File in databaseFiles:
         print(f'Loading {databaseDIR}... ({fileCount})', end='\r')
     #print(f'Loaded "{File}"')
 print(f'Loading {databaseDIR}... Done!')
-print(f'Sorting database...', end='\r')
+print('Sorting database...', end='\r')
 databaseWords = sorted(set(databaseWords))
-print(f'Sorting database... Done!')
+print('Sorting database... Done!')
 loadtime = time.time() - start
 print(f'Loaded {len(databaseWords):,} words from {fileCount} files in {round(loadtime, 2)} seconds')
 
@@ -117,8 +115,8 @@ while True:
     elif testword == '.combo':
         # Brute force code
         i=0
-        with open(f'savecombo.txt', 'a') as f:
-            for L in range(0, len(databaseWords)+1):
+        with open('savecombo.txt', 'a') as f:
+            for L in range(len(databaseWords)+1):
                 for subset in itertools.combinations(databaseWords, L):
                     y = ", ".join(subset)
                     f.write(f'{y}\n')
